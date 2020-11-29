@@ -1,0 +1,30 @@
+- hosts: 192.168.43.252
+  tasks:
+  - package:
+     name: docker-ce
+     state: present
+  - service:
+      name: docker
+      state: started
+      enabled: yes
+  - pip:
+      name: docker-py
+  - community.general.docker_image:
+      name: httpd
+      source: pull
+  - file:
+      dest: /root/ansible-dir
+      state: directory
+  - copy:
+      dest: /root/ansible-dir/ekansh.html
+      content: "HelloEveryone, this is the configuration of webserver on docker using ansible-playbook"
+  - docker_container:
+      name: webserver
+      image: httpd
+      state: started
+      exposed_ports:
+      - 80
+      ports:
+      - 8080:80
+      volumes:
+      - /root/ansible-dir:/usr/local/apache2/htdocs
